@@ -8,6 +8,7 @@ from src.data.preprocess import preprocess_dataset
 from src.features.build_features import build_tfidf_features, save_vectorizer
 from src.models.train import train_model, save_model
 from src.models.evaluate import evaluate_model
+from src.models.predict import load_model, load_vectorizer, predict_sentiment
 
 # Setup logging
 logging.basicConfig(
@@ -67,3 +68,24 @@ if __name__ == "__main__":
 
     # Step 7 — Evaluate model
     evaluate_model(model, X_test_tfidf, y_test)
+
+    # Step 8 — Test predictions
+    print("\n - Testing Predictions - ")
+
+    # Load saved model and vectorizer
+    loaded_model      = load_model(path="models/sentiment_model.pkl")
+    loaded_vectorizer = load_vectorizer(path="models/vectorizer.pkl")
+
+    # Test reviews
+    test_reviews = [
+        "This movie was absolutely amazing! Best film ever!",
+        "Terrible movie, complete waste of time and money!",
+        "The acting was great but the story was boring.",
+        "One of the best films I have ever seen in my life!"
+    ]
+
+    for review in test_reviews:
+        result = predict_sentiment(review, loaded_model, loaded_vectorizer)
+        print(f"\nReview     : {result['review']}")
+        print(f"Prediction : {result['label']}")
+        print(f"Confidence : {result['confidence']}")
