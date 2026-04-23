@@ -1,4 +1,4 @@
-# Python-generated files
+# Python generated files
 __pycache__/
 *.py[oc]
 build/
@@ -8,3 +8,21 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Data files 
+data/
+
+# Trained models 
+models/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environment variables 
+.env
+
+# Mac system file
+.DS_Store
+
+# MLflow
+mlruns/
