@@ -1,10 +1,13 @@
 import os
+import pickle
 import logging
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from src.data.load_data import download_imdb_dataset, load_raw_data
 from src.data.preprocess import preprocess_dataset
 from src.features.build_features import build_tfidf_features, save_vectorizer
+from src.models.train import train_model, save_model
+from src.models.evaluate import evaluate_model
 
 # Setup logging
 logging.basicConfig(
@@ -40,14 +43,27 @@ if __name__ == "__main__":
     print(f"Train size : {len(X_train)}")
     print(f"Test size  : {len(X_test)}")
 
-    # Step 4 — Build features
-    X_train_tfidf, X_test_tfidf, vectorizer = build_tfidf_features(
-        X_train,
-        X_test
-    )
 
-    # Step 5 — Save vectorizer
-    save_vectorizer(vectorizer, path="models/vectorizer.pkl")
+    vectorizer_path = "models/vectorizer.pkl"
 
-    print(f"\nFeature matrix shape : {X_train_tfidf.shape}")
-    print("Features built successfully!!!")
+    if os.path.exists(vectorizer_path):
+        print("Vectorizer already exists!!")
+        with open(vectorizer_path, 'rb') as f:
+            vectorizer = pickle.load(f)
+        X_train_tfidf = vectorizer.transform(X_train)
+        X_test_tfidf  = vectorizer.transform(X_test)
+    else:
+        X_train_tfidf, X_test_tfidf, vectorizer = build_tfidf_features(
+            X_train,
+            X_test
+        )
+        save_vectorizer(vectorizer, path=vectorizer_path)
+
+    # Step 5 — Train model
+    model = train_model(X_train_tfidf, y_train)
+
+    # Step 6 — Save model
+    save_model(model, path="models/sentiment_model.pkl")
+
+    # Step 7 — Evaluate model
+    evaluate_model(model, X_test_tfidf, y_test)

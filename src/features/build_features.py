@@ -30,7 +30,7 @@ def build_tfidf_features(train_texts, test_texts, max_features: int = 5000):
 
     vectorizer = TfidfVectorizer(
         max_features=max_features,
-        ngram_range=(1, 2)
+        ngram_range=(1, 3)
     )
 
     X_train = vectorizer.fit_transform(train_texts)

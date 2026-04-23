@@ -14,7 +14,7 @@ data/raw/
 data/processed/
 
 # Trained models 
-models/
+models/*.pkl
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
