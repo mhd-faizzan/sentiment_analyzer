@@ -43,19 +43,6 @@ def clean_text(text: str) -> str:
     return ' '.join(words)
 
 
-
-# def preprocess_dataset(df: pd.DataFrame) -> pd.DataFrame:
-    
-#     logger.info('Preprocessing dataset!!')
-
-#     df = df.copy()
-
-#     df['clean_text'] = df['text'].apply(clean_text)
-
-#     logger.info(f"Preprocessing complete - {len(df)} reviews cleaned!!!")
-
-#     return df
-
 def preprocess_dataset(df: pd.DataFrame) -> pd.DataFrame:
     """
     Applies clean_text to entire dataset.
