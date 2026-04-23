@@ -10,7 +10,8 @@ wheels/
 .venv
 
 # Data files 
-data/
+data/raw/
+data/processed/
 
 # Trained models 
 models/
