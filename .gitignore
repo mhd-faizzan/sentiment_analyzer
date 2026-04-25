@@ -22,8 +22,24 @@ models/*.pkl
 # Environment variables 
 .env
 
+# Hugging Face tokens/cache
+.cache/huggingface/
+token
+stored_tokens
+
 # Mac system file
 .DS_Store
 
 # MLflow
 mlruns/
+
+# Logs
+logs/
+*.log
+mlruns/
+wandb/
+
+# Temp files
+*.tmp
+*.bak
+*.swp

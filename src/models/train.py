@@ -26,7 +26,7 @@ def train_model(X_train, y_train):
     logger.info("Training model...")
 
     model = LogisticRegression(
-        max_iter=5000,
+        max_iter=10000,
         random_state=42
     )
 
@@ -45,4 +45,3 @@ def save_model(model, path: str = "models/sentiment_model.pkl") -> None:
     logger.info(f"Model saved to {path}!!")
 
 
-    
