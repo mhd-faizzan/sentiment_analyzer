@@ -1,5 +1,5 @@
 """
-build_features.py -  Converts cleaned text into numerical features using TF-IDF vectorization..
+build_features.py - Converts cleaned text into numerical features using TF-IDF vectorization.
 
 """
 
@@ -12,7 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 logger = logging.getLogger(__name__)
 
 
-def build_tfidf_features(train_texts, test_texts, max_features: int = 5000):
+def build_tfidf_features(train_texts, test_texts, max_features: int = 5000, ngram_range: tuple = (1, 3)):
     """
     Converts text data into TF-IDF numerical features.
 
@@ -20,6 +20,7 @@ def build_tfidf_features(train_texts, test_texts, max_features: int = 5000):
         train_texts : training reviews (used to fit vectorizer)
         test_texts  : testing reviews (only transformed)
         max_features: maximum number of words to consider
+        ngram_range : range of n-grams to consider
 
     Returns:
         X_train    : TF-IDF matrix for training
@@ -30,7 +31,7 @@ def build_tfidf_features(train_texts, test_texts, max_features: int = 5000):
 
     vectorizer = TfidfVectorizer(
         max_features=max_features,
-        ngram_range=(1, 3)
+        ngram_range=ngram_range
     )
 
     X_train = vectorizer.fit_transform(train_texts)
@@ -42,8 +43,8 @@ def build_tfidf_features(train_texts, test_texts, max_features: int = 5000):
 
 
 def save_vectorizer(vectorizer, path: str = "models/vectorizer.pkl") -> None:
-  
+
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'wb') as f:
         pickle.dump(vectorizer, f)
-    logger.info(f"Vectorizer saved to {path}")
+    logger.info(f"Vectorizer saved to {path}!!")

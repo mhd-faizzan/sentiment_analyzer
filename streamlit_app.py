@@ -1,14 +1,19 @@
 """
-streamlit_app.py -  Web interface for the Sentiment Analyzer.
+streamlit_app.py - Web interface for the Sentiment Analyzer.
 
 """
 
+import yaml
 import streamlit as st
 from src.models.predict import (
     load_model,
     load_vectorizer,
     predict_sentiment
 )
+
+# Load config
+with open("configs/config.yaml") as f:
+    config = yaml.safe_load(f)
 
 # Page config
 st.set_page_config(
@@ -20,8 +25,8 @@ st.set_page_config(
 # Load model and vectorizer once
 @st.cache_resource
 def load_resources():
-    model      = load_model(path="models/sentiment_model.pkl")
-    vectorizer = load_vectorizer(path="models/vectorizer.pkl")
+    model      = load_model(path=config['model']['save_path'])
+    vectorizer = load_vectorizer(path=config['features']['vectorizer_path'])
     return model, vectorizer
 
 model, vectorizer = load_resources()

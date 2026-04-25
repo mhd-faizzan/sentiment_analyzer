@@ -1,4 +1,5 @@
 import os
+import yaml
 import pickle
 import logging
 import pandas as pd
@@ -10,25 +11,31 @@ from src.models.train import train_model, save_model
 from src.models.evaluate import evaluate_model
 from src.models.predict import load_model, load_vectorizer, predict_sentiment
 
+# Load config
+with open("configs/config.yaml") as f:
+    config = yaml.safe_load(f)
+
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=config['logging']['level'],
+    format=config['logging']['format']
 )
 
 if __name__ == "__main__":
 
     # Step 1 — Download data
-    download_imdb_dataset(save_path="data/raw/reviews.csv")
+    download_imdb_dataset(
+        save_path=config['data']['raw_path']
+    )
 
     # Step 2 — Load or preprocess data
-    processed_path = "data/processed/clean_reviews.csv"
+    processed_path = config['data']['processed_path']
 
     if os.path.exists(processed_path):
         print("Clean data already exists :-)")
         clean_df = pd.read_csv(processed_path)
     else:
-        df = load_raw_data(path="data/raw/reviews.csv")
+        df = load_raw_data(path=config['data']['raw_path'])
         clean_df = preprocess_dataset(df)
         os.makedirs("data/processed", exist_ok=True)
         clean_df.to_csv(processed_path, index=False)
@@ -37,15 +44,15 @@ if __name__ == "__main__":
     X_train, X_test, y_train, y_test = train_test_split(
         clean_df['clean_text'],
         clean_df['label'],
-        test_size=0.2,
-        random_state=42
+        test_size=config['data']['test_size'],
+        random_state=config['data']['random_state']
     )
 
     print(f"Train size : {len(X_train)}")
     print(f"Test size  : {len(X_test)}")
 
-
-    vectorizer_path = "models/vectorizer.pkl"
+    # Step 4 — Build or load features
+    vectorizer_path = config['features']['vectorizer_path']
 
     if os.path.exists(vectorizer_path):
         print("Vectorizer already exists!!")
@@ -56,15 +63,21 @@ if __name__ == "__main__":
     else:
         X_train_tfidf, X_test_tfidf, vectorizer = build_tfidf_features(
             X_train,
-            X_test
+            X_test,
+            max_features=config['features']['max_features']
         )
         save_vectorizer(vectorizer, path=vectorizer_path)
 
     # Step 5 — Train model
-    model = train_model(X_train_tfidf, y_train)
+    model = train_model(
+        X_train_tfidf,
+        y_train,
+        max_iter=config['model']['max_iter'],
+        random_state=config['model']['random_state']
+    )
 
     # Step 6 — Save model
-    save_model(model, path="models/sentiment_model.pkl")
+    save_model(model, path=config['model']['save_path'])
 
     # Step 7 — Evaluate model
     evaluate_model(model, X_test_tfidf, y_test)
@@ -72,11 +85,9 @@ if __name__ == "__main__":
     # Step 8 — Test predictions
     print("\n - Testing Predictions - ")
 
-    # Load saved model and vectorizer
-    loaded_model      = load_model(path="models/sentiment_model.pkl")
-    loaded_vectorizer = load_vectorizer(path="models/vectorizer.pkl")
+    loaded_model      = load_model(path=config['model']['save_path'])
+    loaded_vectorizer = load_vectorizer(path=config['features']['vectorizer_path'])
 
-    # Test reviews
     test_reviews = [
         "This movie was absolutely amazing! Best film ever!",
         "Terrible movie, complete waste of time and money!",
