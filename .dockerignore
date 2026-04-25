@@ -1,0 +1,15 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+*.pyo
+data/
+models/
+.env
+.DS_Store
+notebooks/
+mlruns/
+README.md
+main.py
+push_models.py
+app.py
